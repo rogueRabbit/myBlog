@@ -1,21 +1,18 @@
 import React, { Component } from 'react';
-import './App.css';
+import './App.scss';
 import Header from './components/Header/index';
 import Nav from './components/Nav/index';
+import Main from './view/index/index';
+import Footer from './components/Footer/index';
 
 class App extends Component {
   render() {
     return (
       <div className="App">
-        {/*<header className="App-header">*/}
-          {/*<img src={logo} className="App-logo" alt="logo" />*/}
-          {/*<h1 className="App-title">Welcome to React</h1>*/}
-        {/*</header>*/}
         <Header></Header>
         <Nav></Nav>
-        <p className="App-intro">
-          To get started, edit <code>src/App.js</code> and save to reload.
-        </p>
+        <Main></Main>
+        <Footer></Footer>
       </div>
     );
   }

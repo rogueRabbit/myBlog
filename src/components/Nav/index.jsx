@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { Link } from 'react-router';
 import './index.scss';
 
 class Nav extends Component {
@@ -19,12 +20,24 @@ class Nav extends Component {
                             </div>
                             <div className="collapse navbar-collapse" id="main-menu">
                                 <ul className="menu">
-                                    <li className="nav-current" role="presentation"><a href="/">首页</a></li>
-                                    <li role="presentation"><a href="http://wenda.ghostchina.com">论坛</a></li>
-                                    <li role="presentation"><a href="/ghost-cheat-sheet/">快捷手册</a></li>
-                                    <li role="presentation"><a href="http://docs.ghostchina.com/zh/">中文文档</a></li>
-                                    <li role="presentation"><a href="/download/">下载</a></li>
-                                    <li role="presentation"><a href="/about/">关于</a></li>
+                                    <li className="nav-current" role="presentation">
+                                        <Link to="/">首页</Link>
+                                    </li>
+                                    <li role="presentation">
+                                        <a>论坛</a>
+                                    </li>
+                                    <li role="presentation">
+                                        <a>快捷手册</a>
+                                    </li>
+                                    <li role="presentation">
+                                        <a>中文文档</a>
+                                    </li>
+                                    <li role="presentation">
+                                        <a>下载</a>
+                                    </li>
+                                    <li role="presentation">
+                                        <a>关于</a>
+                                    </li>
                                 </ul>
                             </div>
                         </div>
