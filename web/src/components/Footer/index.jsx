@@ -1,26 +1,25 @@
-import React, { Component } from 'react';
+import React from 'react';
+import { Link } from 'react-router';
 import './index.scss';
 
-class Footer extends Component {
-
-    render(){
-
-        return(
-
-            <div className="copyright">
-                <div className="container">
-                    <div className="row">
-                        <div className="col-sm-12">
-                            <span>Copyright © <a href="http://www.ghostchina.com/">Ghost中文网</a></span> |
-                            <span><a href="http://www.miibeian.gov.cn/" >京ICP备11008151号</a></span> |
-                            <span>京公网安备11010802014853</span>
-                        </div>
+/**
+ * footer只是一个函数式组件
+ */
+const Footer = () => {
+    return (
+        <div className="copyright">
+            <div className="container">
+                <div className="row">
+                    <div className="col-sm-12">
+                        <span>贵有恒，何必三更起五更眠。最无益，只怕一日曝十日寒。</span> |
+                        <span className="entry">
+                            <Link to="/home">后台管理</Link>
+                        </span>
                     </div>
                 </div>
             </div>
-        )
-    }
-
+        </div>
+    )
 }
 
 export default Footer;

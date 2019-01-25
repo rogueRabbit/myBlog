@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Row, Col, Table, Button, Modal, Form, Input, Divider } from 'antd';
+import { Row, Col, Table, Button, Modal, Form, Input, Divider, message } from 'antd';
 import Nagination from 'component/navigation/index';
+import Util from 'utils';
+import API from 'utils/api';
 
 const FormItem = Form.Item;
 
@@ -44,64 +46,31 @@ const CollectionCreateForm = Form.create()(
             };
         }
 
-        onCheck = (checkedKeys) => {
-            console.log('checkedKeys', checkedKeys);
-            this.props.onSelectMenus(checkedKeys);
-            this.setState({
-                selectedKeys:checkedKeys,
-            });
-        }
-
-        onselectedKeys=() => {
-            let _allMenuList = this.props.allMenuList;
-            let _selectedKeys = this.props.checkedKeys || [];
-
-            if (_selectedKeys.length) {
-                _allMenuList.forEach((item) => {
-                    let id = item.key + '';
-                    let _children = item.children;
-                    _selectedKeys.forEach((value) => {
-                        if (value === id && _children.length) {
-                            _selectedKeys.splice(_selectedKeys.findIndex(value1 => value1 === id), 1);
-                        }
-                    });
-                });
-            }
-            console.log(_selectedKeys);
-            return _selectedKeys;
-        }
-
         // 提交表单
         handleSubmit = (e) => {
             e.preventDefault();
             this.props.form.validateFields((err, values) => {
                 if (!err) {
-                    // let isEdit = this.props.isEdit;
-                    // const params = {
-                    //     id:this.props.current.id,
-                    //     name:values.name,
-                    //     intro:values.intro,
-                    // };
-                    
-                }
+                    let isEdit = this.props.isEdit;
+                    const params = {
+                        labelName: values.labelName,
+                        sort: values.sort,
+                    };
+                    if (isEdit) {
+                        params['id'] = this.props.current.id;
+                    }
+                    Util.post(API.addOrModifyLabel, params).then(json => {
+                        if (json.return_code === 0) {
+                            this.props.onCreate();
+                        } else {
+                            message.info(json.return_message);
+                        }
+                    }, (error) => {
+                        console.log(error);
+                    });
+                }   
             });
         }
-
-        onChangeRole = (roleId) => {
-            if (!('value' in this.props)) {
-                this.setState({ roleId });
-            }
-            this.triggerChange({ roleId });
-        }
-
-        triggerChange = (changedValue) => {
-            // Should provide an event to pass value to Form.
-            const onChange = this.props.onChange;
-            if (onChange) {
-                onChange(Object.assign({}, this.state, changedValue));
-            }
-        }
-
 
         render() {
             const {
@@ -116,8 +85,6 @@ const CollectionCreateForm = Form.create()(
             } else {
                 isDisabled = false;
             }
-           
-
             return (
                 <Modal
                     visible={visible}
@@ -131,10 +98,19 @@ const CollectionCreateForm = Form.create()(
                 >
                     <Form layout="vertical" onSubmit={this.handleSubmit}>
                         <FormItem label="标签" labelCol={{ span: 6 }} wrapperCol={{ span: 16 }}>
-                            {getFieldDecorator('name',
+                            {getFieldDecorator('labelName',
                                 {
                                     rules: [{ required: true, message: '请输入标签！' }],
-                                    initialValue: current.name,
+                                    initialValue: current.labelName,
+                                })(
+                                <Input />,
+                            )}
+                        </FormItem>
+                        <FormItem label="排序" labelCol={{ span: 6 }} wrapperCol={{ span: 16 }}>
+                            {getFieldDecorator('sort',
+                                {
+                                    rules: [{ required: true, message: '请输入排序！' }],
+                                    initialValue: current.sort,
                                 })(
                                 <Input />,
                             )}
@@ -157,6 +133,28 @@ class LabelManager extends Component {
         };
     }
 
+    componentDidMount() {
+        this.queryLabelList();
+    }
+
+
+    // 查询标签列表
+    queryLabelList() {
+        Util.get(API.queryLabelList, {}).then(json => {
+            if (json.return_code === 0) {
+                let list = json.data.list;
+                let newList = list.map((item, index) => {
+                    return Object.assign({}, item, {key: index});
+                })
+                this.setState({
+                    data: newList
+                })
+            } else {
+            
+            }
+        });
+    }
+
     showModal = () => {
         this.setState({
             showAdd: true,
@@ -166,6 +164,17 @@ class LabelManager extends Component {
 
     handleCancel = () => {
         this.setState({ showAdd: false });
+    }
+
+    handleCreate = () => {
+        const form = this.formRef.props.form;
+        form.resetFields();
+        this.setState({ showAdd: false });
+        this.queryLabelList();
+    }
+
+    saveFormRef = (formRef) => {
+        this.formRef = formRef;
     }
 
     showEditModal = (item) => {
@@ -182,40 +191,52 @@ class LabelManager extends Component {
         else if (key === 'delete') {
             Modal.confirm({
                 title: '删除标签',
-                content: '是否确定删除' + currentItem.name,
+                content: '是否确定删除' + currentItem.labelName,
                 okText: '确认',
                 cancelText: '取消',
-                onOk: () => this.deleteItem(currentItem.id, currentItem.name),
+                onOk: () => this.deleteItem(currentItem.id, currentItem.labelName),
             });
         }
     };
 
     // 删除用户
     deleteItem(id, name) {
-
-
-
+        Util.get(API.deleteLabel, {
+            id:id,
+        }).then(res => {
+            if (res) {
+                if (res.return_code === 0) {
+                    message.info(name + '已被删除');
+                    this.queryLabelList();
+                }
+            }
+        }, (error) => {
+            console.log(error);
+        });
     }   
 
     render() {
 
         const columns = [{
             title: '标签',
-            dataIndex: 'name',
-            render: text => <a href="javascript:;">{text}</a>,
-          }, {
+            dataIndex: 'labelName',
+            key: 'labelName',
+            }, {
+            title: '排序',
+            dataIndex: 'sort',
+            key: 'sort',
+            }, {
             title: '创建人',
             dataIndex: 'createMan',
+            key: 'createMan',
           }, {
             title: '创建时间',
             dataIndex: 'createTime',
-          },{
-            title: '状态',
-            dataIndex: 'status',
+            key: 'createTime',
           },{
             title: '操作', 
             dataIndex: '', 
-            key: 'x', 
+            key: 'handle', 
             render: (text, record) => (
                 <span>
                     <a onClick={() => this.editAndDelete(record, 'edit')}>修改</a>
@@ -224,44 +245,8 @@ class LabelManager extends Component {
                 </span>
             ),
           },];
-          const data = [{
-            key: '1',
-            name: 'John Brown',
-            createMan: 32,
-            createTime: 111,
-            status: 'New York No. 1 Lake Park',
-          }, {
-            key: '2',
-            name: 'Jim Green',
-            createMan: 42,
-            createTime: 111,
-            status: 'London No. 1 Lake Park',
-          }, {
-            key: '3',
-            name: 'Joe Black',
-            createMan: 32,
-            createTime: 111,
-            status: 'Sidney No. 1 Lake Park',
-          }, {
-            key: '4',
-            name: 'Disabled User',
-            createMan: 99,
-            createTime: 111,
-            status: 'Sidney No. 1 Lake Park',
-          }];
           
-          // rowSelection object indicates the need for row selection
-          const rowSelection = {
-            onChange: (selectedRowKeys, selectedRows) => {
-              console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
-            },
-            getCheckboxProps: record => ({
-              disabled: record.name === 'Disabled User', // Column configuration not to be checked
-              name: record.name,
-            }),
-          };
-
-        let { showAdd, isEdit, current = {} } = this.state;
+        let { data, showAdd, isEdit, current = {} } = this.state;
         return (
             <div>
                 <Nagination title={'标签管理'}/>
@@ -274,7 +259,7 @@ class LabelManager extends Component {
                 </Row>
                 <Row>
                     <Col span={24}>
-                        <Table rowSelection={rowSelection} columns={columns} dataSource={data} />
+                        <Table  columns={columns} dataSource={data} />
                     </Col>
                 </Row>
                 <CollectionCreateForm

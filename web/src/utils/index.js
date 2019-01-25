@@ -1,3 +1,5 @@
+import { cookie } from 'cookie_js';
+import { message } from 'antd';
 class Util {
 
     static get(url, params) {
@@ -19,9 +21,16 @@ class Util {
         }).then((res) => {
             return res.json();
         }).then((res) => {
+            if (res.return_code === -9999) { // 未检查到登录态
+                cookie.set('isLogin', 0);
+                cookie.remove('userName');
+                message.info('未检查到您的登录态，页面自动跳回首页!');
+                let returnUrl = window.location.protocol + '//' + window.location.host;
+                window.location.href = returnUrl;
+            } 
             return res;
         }).catch(() => {
-            alert('出错了');
+            console.log('出错了');
         })
     }
 
@@ -30,7 +39,7 @@ class Util {
             method: 'post',
             headers: {
                 'Accept': 'application/json',
-                'Content-Type': 'application/x-www-form-urlencoded'
+                'Content-Type': 'application/x-www-form-urlencoded',
             },
             credentials: 'include',
             body: params ? this.param(params) : '',
@@ -42,9 +51,18 @@ class Util {
         }).then((res) => {
             return res.json();
         }).then((res) => {
+            if (res.return_code) {
+                if (res.return_code === -9999) { // 未检查到登录态
+                    cookie.set('isLogin', 0);
+                    cookie.remove('userName');
+                    message.info('未检查到您的登录态，页面自动跳回首页!');
+                    let returnUrl = window.location.protocol + '//' + window.location.host;
+                    window.location.href = returnUrl;
+                }
+            }
             return res;
         }).catch(() => {
-            alert('出错了');
+            console.log('出错了');
         })
     }
 

@@ -5,6 +5,7 @@ import {
 import { hashHistory } from 'react-router';
 import Util from 'utils';
 import API from 'utils/api';
+import { cookie } from 'cookie_js';
 
 class NormalLoginForm extends Component {
     constructor(props) {
@@ -16,16 +17,18 @@ class NormalLoginForm extends Component {
         }
       }
     }
+
     handleSubmit = (e) => {
       e.preventDefault();
       this.props.form.validateFields((err, values) => {
         if (!err) {
-          console.log('Received values of form: ', values);
             Util.get(API.userLogin, {
               userName: values.userName,
               password: values.password
             }).then(json => {
                 if (json.return_code === 0) {
+                  cookie.set('isLogin', 1);
+                  cookie.set('userName', json.data.userName);
                   this.setState({
                     error_tips: {
                       is_show: false,
@@ -48,7 +51,7 @@ class NormalLoginForm extends Component {
         }
       });
     }
-  
+
     render() {
       
       let { error_tips } = this.state;

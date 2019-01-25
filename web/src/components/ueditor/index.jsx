@@ -7,7 +7,8 @@ class Ueditor extends Component {
         config: {
             autoHeightEnabled: true,
             autoFloatEnabled: true,
-            initialFrameHeight: 400,
+            initialFrameHeight: 300,
+            editorContent: ''
         }
       }
     
@@ -34,8 +35,13 @@ class Ueditor extends Component {
           if (!ueditor) {
             UE.delEditor(id);
             self.initEditor();
+          } else {
+            if (self.props.editorContent) {
+              self.setContent(self.props.editorContent, false);
+            }
           }
         })
+        
       }
 
       getContent() {

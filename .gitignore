@@ -1,5 +1,6 @@
-node_modules/
-package-lock.json
-.idea/
-npm-debug.*
 .vscode/
+.idea/
+/server/node_modules
+/web/node_modules
+/server/package-lock.json
+/web/package-lock.json

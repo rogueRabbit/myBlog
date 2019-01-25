@@ -35,10 +35,11 @@
         line-height: 4em;
         display: block;
         padding: 0 21px;
-      }
-      &.nav-current {
-        border-bottom: 2px solid #e67e22;
-        margin-bottom: -2px;
+        text-decoration: none;
+        &.active {
+          border-bottom: 2px solid #e67e22;
+          margin-bottom: -2px;
+        }
       }
       &:hover {
         a {

@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Row, Col, Table, Button, Modal, Form, Input, Divider } from 'antd';
+import { Row, Col, Table, Button, Modal, Form, Input, Divider, message } from 'antd';
 import Nagination from 'component/navigation/index';
+import Util from 'utils';
+import API from 'utils/api';
 
 import './index.scss';
 
@@ -47,32 +49,6 @@ const CollectionCreateForm = Form.create()(
             };
         }
 
-        onCheck = (checkedKeys) => {
-            console.log('checkedKeys', checkedKeys);
-            this.props.onSelectMenus(checkedKeys);
-            this.setState({
-                selectedKeys:checkedKeys,
-            });
-        }
-
-        onselectedKeys=() => {
-            let _allMenuList = this.props.allMenuList;
-            let _selectedKeys = this.props.checkedKeys || [];
-
-            if (_selectedKeys.length) {
-                _allMenuList.forEach((item) => {
-                    let id = item.key + '';
-                    let _children = item.children;
-                    _selectedKeys.forEach((value) => {
-                        if (value === id && _children.length) {
-                            _selectedKeys.splice(_selectedKeys.findIndex(value1 => value1 === id), 1);
-                        }
-                    });
-                });
-            }
-            console.log(_selectedKeys);
-            return _selectedKeys;
-        }
 
         // 提交表单
         handleSubmit = (e) => {
@@ -80,34 +56,24 @@ const CollectionCreateForm = Form.create()(
             this.props.form.validateFields((err, values) => {
                 if (!err) {
                     let isEdit = this.props.isEdit;
-                    let auth = this.onselectedKeys();
                     const params = {
-                        id:this.props.current.id,
-                        name:values.name,
-                        intro:values.intro,
-                        auth:auth,
-
+                        id: this.props.current.id,
+                        userName: values.userName,
+                        password: values.loginPassword,
+                        remarks: values.remarks,
                     };
-                    
+                    Util.post(API.addUser, params).then(json => {
+                        if (json.return_code === 0) {
+                            this.props.onCreate();
+                        } else {
+                            message.info(json.return_message);
+                        }
+                    }, (error) => {
+                        console.log(error);
+                    });
                 }
             });
         }
-
-        onChangeRole = (roleId) => {
-            if (!('value' in this.props)) {
-                this.setState({ roleId });
-            }
-            this.triggerChange({ roleId });
-        }
-
-        triggerChange = (changedValue) => {
-            // Should provide an event to pass value to Form.
-            const onChange = this.props.onChange;
-            if (onChange) {
-                onChange(Object.assign({}, this.state, changedValue));
-            }
-        }
-
 
         render() {
             const {
@@ -137,19 +103,10 @@ const CollectionCreateForm = Form.create()(
                 >
                     <Form layout="vertical" onSubmit={this.handleSubmit}>
                         <FormItem label="用户名" labelCol={{ span: 6 }} wrapperCol={{ span: 16 }}>
-                            {getFieldDecorator('name',
+                            {getFieldDecorator('userName',
                                 {
                                     rules: [{ required: true, message: '请输入用户名！' }],
-                                    initialValue: current.name,
-                                })(
-                                <Input />,
-                            )}
-                        </FormItem>
-                        <FormItem label="手机号码" labelCol={{ span: 6 }} wrapperCol={{ span: 16 }}>
-                            {getFieldDecorator('phone',
-                                {
-                                    rules: [{ required: true, message: '请输入手机号码！' }],
-                                    initialValue: current.phone,
+                                    initialValue: current.userName,
                                 })(
                                 <Input />,
                             )}
@@ -164,7 +121,7 @@ const CollectionCreateForm = Form.create()(
                             )}
                         </FormItem>
                         <FormItem label="用户描述" labelCol={{ span: 6 }} wrapperCol={{ span: 16 }}>
-                            {getFieldDecorator('intro', { initialValue: current.intro || '' })(<TextArea placeholder="请输入用户描述信息" autosize={{ minRows: 2, maxRows: 6 }} />)}
+                            {getFieldDecorator('remarks', { initialValue: current.remarks || '' })(<TextArea placeholder="请输入用户描述信息" autosize={{ minRows: 2, maxRows: 6 }} />)}
                         </FormItem>
                     </Form>
                 </Modal>
@@ -184,6 +141,27 @@ class UserManager extends Component {
         };
     }
 
+    componentDidMount() {
+        this.queryUserList();
+    }
+
+    // 查询用户列表
+    queryUserList() {
+        Util.get(API.queryUserList, {}).then(json => {
+            if (json.return_code === 0) {
+                let list = json.data.list;
+                let newList = list.map((item, index) => {
+                    return Object.assign({}, item, {key: index});
+                })
+                this.setState({
+                    data: newList
+                })
+            } else {
+            
+            }
+        });
+    }
+
     showModal = () => {
         this.setState({
             showAdd: true,
@@ -195,8 +173,18 @@ class UserManager extends Component {
         this.setState({ showAdd: false });
     }
 
+    handleCreate = () => {
+        const form = this.formRef.props.form;
+        form.resetFields();
+        this.setState({ showAdd: false });
+        this.queryUserList();
+    }
+
+    saveFormRef = (formRef) => {
+        this.formRef = formRef;
+    }
+
     showEditModal = (item) => {
-        
         this.setState({
             showAdd: true,
             current: item,
@@ -209,41 +197,48 @@ class UserManager extends Component {
         else if (key === 'delete') {
             Modal.confirm({
                 title: '删除用户',
-                content: '是否确定删除' + currentItem.name,
+                content: '是否确定删除' + currentItem.userName,
                 okText: '确认',
                 cancelText: '取消',
-                onOk: () => this.deleteItem(currentItem.id, currentItem.name),
+                onOk: () => this.deleteItem(currentItem.id, currentItem.userName),
             });
         }
     };
 
     // 删除用户
     deleteItem(id, name) {
-
-
-
+        Util.get(API.deleteUser, {
+            id:id,
+        }).then(res => {
+            if (res) {
+                if (res.return_code === 0) {
+                    message.info(name + '已被删除');
+                    this.queryUserList();
+                }
+            }
+        }, (error) => {
+            console.log(error);
+        });
     }   
 
     render() {
 
         const columns = [{
+            key: 'userName',
             title: '用户名',
-            dataIndex: 'name',
-            render: text => <a href="javascript:;">{text}</a>,
+            dataIndex: 'userName',
           }, {
-            title: '手机号码',
-            dataIndex: 'phone',
-          }, {
-            title: '登录密码',
-            dataIndex: 'loginPassword',
-            render: text => 'xxx'
+            key: 'createTime',
+            title: '创建时间',
+            dataIndex: 'createTime',
           },{
+            key: 'remarks',
             title: '用户描述',
-            dataIndex: 'intro',
+            dataIndex: 'remarks',
           },{
             title: '操作', 
             dataIndex: '', 
-            key: 'x', 
+            key: 'handle', 
             render: (text, record) => (
                 <span>
                     <a onClick={() => this.editAndDelete(record, 'edit')}>修改</a>
@@ -252,44 +247,8 @@ class UserManager extends Component {
                 </span>
             ),
           },];
-          const data = [{
-            key: '1',
-            name: 'John Brown',
-            phone: 32,
-            loginPassword: 111,
-            intro: 'New York No. 1 Lake Park',
-          }, {
-            key: '2',
-            name: 'Jim Green',
-            phone: 42,
-            loginPassword: 111,
-            intro: 'London No. 1 Lake Park',
-          }, {
-            key: '3',
-            name: 'Joe Black',
-            phone: 32,
-            loginPassword: 111,
-            intro: 'Sidney No. 1 Lake Park',
-          }, {
-            key: '4',
-            name: 'Disabled User',
-            phone: 99,
-            loginPassword: 111,
-            intro: 'Sidney No. 1 Lake Park',
-          }];
           
-          // rowSelection object indicates the need for row selection
-          const rowSelection = {
-            onChange: (selectedRowKeys, selectedRows) => {
-              console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
-            },
-            getCheckboxProps: record => ({
-              disabled: record.name === 'Disabled User', // Column configuration not to be checked
-              name: record.name,
-            }),
-          };
-
-        let { showAdd, isEdit, current = {} } = this.state;
+        let { data, showAdd, isEdit, current = {} } = this.state;
         return (
             <div>
                 <Nagination title={'用户管理'}/>
@@ -302,7 +261,7 @@ class UserManager extends Component {
                 </Row>
                 <Row>
                     <Col span={24}>
-                        <Table rowSelection={rowSelection} columns={columns} dataSource={data} />
+                        <Table  columns={columns} dataSource={data} />
                     </Col>
                 </Row>
                 <CollectionCreateForm

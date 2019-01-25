@@ -1,13 +1,24 @@
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import { Link } from 'react-router';
 import './index.scss';
 
-class Nav extends Component {
+class Nav extends PureComponent {
+
+    constructor(props) {
+        super(props);
+        this.state = {
+            navList: [
+                { title: '首页', link: '/', isSelect: true },
+                { title: '文章', link: '/article', isSelect: false },
+                { title: '笔记', link: '/note', isSelect: false },
+                { title: '关于', link: '/aboutUs', isSelect: false },
+            ]
+        }
+    }
 
     render(){
-
+        let { navList } = this.state;
         return (
-
             <nav className="main-navigation">
                 <div className="container">
                     <div className="row">
@@ -20,24 +31,15 @@ class Nav extends Component {
                             </div>
                             <div className="collapse navbar-collapse" id="main-menu">
                                 <ul className="menu">
-                                    <li className="nav-current" role="presentation">
-                                        <Link to="/">首页</Link>
-                                    </li>
-                                    <li role="presentation">
-                                        <a>论坛</a>
-                                    </li>
-                                    <li role="presentation">
-                                        <a>快捷手册</a>
-                                    </li>
-                                    <li role="presentation">
-                                        <a>中文文档</a>
-                                    </li>
-                                    <li role="presentation">
-                                        <a>下载</a>
-                                    </li>
-                                    <li role="presentation">
-                                        <a>关于</a>
-                                    </li>
+                                    {
+                                        navList.map((item, index) => {
+                                            return (
+                                                <li key={index}>
+                                                    <Link to={item.link} activeClassName="active">{item.title}</Link>
+                                                </li>
+                                            )
+                                        })
+                                    }
                                 </ul>
                             </div>
                         </div>
@@ -46,7 +48,6 @@ class Nav extends Component {
             </nav>
         )
     }
-
 }
 
 export default Nav

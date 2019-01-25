@@ -1,0 +1,11 @@
+.userMessage {
+    position: absolute;
+    width: 250px;
+    height: 100%;
+    top: 0;
+    right: 0;
+    .split {
+        display: inline-block;
+        padding: 0 10px;
+    }
+}
