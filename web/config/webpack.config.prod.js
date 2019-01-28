@@ -155,6 +155,10 @@ module.exports = {
               
               compact: true,
             },
+            query: {
+              cacheDirectory: true,
+              plugins: [["import", { libraryName: "antd", style: "css" }]]
+            }
           },
           // The notation here is somewhat confusing.
           // "postcss" loader applies autoprefixer to our CSS.

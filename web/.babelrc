@@ -1,13 +1,11 @@
 {
     "presets": [
-      ["es2015", { "loose": true }],
-	    "stage-1",
       "react-app"
     ],
     "plugins": [
         ["import", {
           "libraryName": "antd",
-          "libraryDirectory": "es",
+          // "libraryDirectory": "es",
           "style": "css" // `style: true` 会加载 less 文件
         }]
       ]
