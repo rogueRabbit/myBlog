@@ -152,6 +152,9 @@ module.exports = {
               // It enables caching results in ./node_modules/.cache/babel-loader/
               // directory for faster rebuilds.
               cacheDirectory: true,
+              // plugins:[
+              //   ['import',{libraryName:'antd', style:true}]
+              // ],
             },
           },
           // "postcss" loader applies autoprefixer to our CSS.

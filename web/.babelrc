@@ -2,11 +2,21 @@
     "presets": [
       "react-app"
     ],
+    // "plugins": [
+    //     ["import", {
+    //       "libraryName": "antd",
+    //       // "libraryDirectory": "es",
+    //       "style": "css" // `style: true` 会加载 less 文件
+    //     }]
+    //   ]
     "plugins": [
-        // ["import", {
-        //   "libraryName": "antd",
-        //   // "libraryDirectory": "es",
-        //   "style": "css" // `style: true` 会加载 less 文件
-        // }]
+      "transform-runtime",
+      [
+        "import",
+        {
+          "libraryName": "antd",
+          "style": "css"
+        }
       ]
+    ]
   }
