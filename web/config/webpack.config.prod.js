@@ -154,10 +154,6 @@ module.exports = {
             options: {
               
               compact: true,
-            },
-            query: {
-              cacheDirectory: true,
-              plugins: [["import", { libraryName: "antd", style: "css" }]]
             }
           },
           // The notation here is somewhat confusing.
