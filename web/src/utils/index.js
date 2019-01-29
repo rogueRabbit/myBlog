@@ -107,6 +107,20 @@ class Util {
         }
         return pairs.join('&');
     }
+
+    static getUrlParam(url, name) {
+        let reg = new RegExp('(^|&)' + name + '=([^&]*)(&|$)');
+        let r = url.substr(url.indexOf('\?') + 1).match(reg);
+        if (r != null) {
+            let rUrl = decodeURIComponent(unescape(r[2]));
+            // 临时处理路由导致的#/情况
+            if (rUrl.substring(rUrl.length - 2) === '#/') {
+                rUrl = rUrl.substring(0, rUrl.length - 2);
+            }
+            return rUrl;
+        }
+        return null;
+    }
 }
 
 export default Util;

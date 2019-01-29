@@ -54,6 +54,9 @@ router.get('/article/queryArticleList', ArticleController.queryAllArticle);
 // 下架文章
 router.get('/article/shelfArticle', ArticleController.shelfArticle);
 
+// 查询文章详情
+router.get('/article/queryArticleById', ArticleController.queryArticleById);
+
 
 
 module.exports = router

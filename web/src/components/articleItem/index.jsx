@@ -12,11 +12,6 @@ class ArticleItem extends PureComponent {
         singleArticle: {},
     } 
 
-    showContent(content) {
-        // let newContent = content.replace(/%25/g, '%');
-        // return decodeURIComponent(newContent);
-        return content;
-    }
 
     render() {
         let { singleArticle } = this.props;
@@ -29,9 +24,9 @@ class ArticleItem extends PureComponent {
                             <time className="post-date" >{singleArticle.publishTime}</time>
                         </div>
                     </div>
-                    <div className="post-content" dangerouslySetInnerHTML={{ __html: this.showContent(singleArticle.content)}} />
+                    <div className="post-content" dangerouslySetInnerHTML={{ __html: singleArticle.content}} />
                     <div className="post-permalink">
-                        <Link to="/article" className="btn btn-default">阅读全文</Link>
+                        <Link to={'/article?id='+singleArticle.id} className="btn btn-default">阅读全文</Link>
                     </div>
                     <footer className="post-footer clearfix">
                         <div className="pull-left tag-list">

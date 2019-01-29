@@ -5,6 +5,8 @@ const Label =  Sequelize.import('../schema/label.js');
 const moment = require('moment');
 
 Article.sync({force: false});
+const labelNameNew = Label.belongsTo(Article, { as: 'labels', foreignKey: 'relationLabel', targetKey: 'id'});
+
 
 class ArticleModel {
 
@@ -50,11 +52,12 @@ class ArticleModel {
             return await Article.findAll({
                 where: {
                   status: status
-                }
+                },
               });
         } else {
             return await Article.findAll({
                 attributes: ['id', 'title', 'relationLabel', 'sort', 'publishMan', 'publishTime', 'status', 'content'],
+                include: [labelNameNew]
             })
         }
     }

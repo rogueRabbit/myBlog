@@ -10,6 +10,7 @@ const API = {
     addOrModifyArticle: '/api/article/addOrModifyArticle',
     shelfArticle: '/api/article/shelfArticle',
     userLouout: '/api/user/userLouout',
+    queryArticleById: '/api/article/queryArticleById',
 
 }
 

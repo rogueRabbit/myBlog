@@ -50,12 +50,5 @@ module.exports =  function(sequelize, DataTypes){
             }
         }
     })
-    article.associate = function(models) {
-        article.hasOne(models.label);
-        article.belongsTo(models.label, {
-            foreignKey:'relationLabel', targetKey: 'id'
-        });
-    };
-    
     return article;
 }

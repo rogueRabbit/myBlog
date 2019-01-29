@@ -63,6 +63,20 @@ class ArticleController {
             ctx.body = statusCode.ERROR_1004();
         }
     }
+
+    // 根据id查询文章的详情
+    static async queryArticleById(ctx) {
+        const article = ctx.query;
+        ctx.response.status = 200;
+        if (article.id) {
+            const data = await articleModel.findById(article.id);
+            ctx.body = statusCode.SUCCESS_200('success', {
+                articleDetail: data
+            });
+        } else {
+            ctx.body = statusCode.ERROR_1004();
+        }
+    }
 }
 
 module.exports =  ArticleController;

@@ -282,6 +282,9 @@ class ArticleManager extends Component {
             title: '所属标签',
             dataIndex: 'relationLabel',
             key: 'relationLabel',
+            render: (text, record) => {
+                return record.labels.labelName;
+            }
           }, {
             title: '作者',
             dataIndex: 'publishMan',
