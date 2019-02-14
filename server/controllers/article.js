@@ -16,7 +16,7 @@ class ArticleController {
             ctx.body = statusCode.ERROR_9999();
             return;
         }
-        if ( !article.title || !article.content || !article.relationLabel || !article.sort || !article.publishMan || !article.status) {
+        if ( !article.title || !article.content || !article.relationLabel || !article.sort || !article.publishMan || !article.status || !article.remark) {
             ctx.body = statusCode.ERROR_1004();
         } else {
             if (article.id) { // 修改文章
@@ -72,6 +72,20 @@ class ArticleController {
             const data = await articleModel.findById(article.id);
             ctx.body = statusCode.SUCCESS_200('success', {
                 articleDetail: data
+            });
+        } else {
+            ctx.body = statusCode.ERROR_1004();
+        }
+    }
+
+    // 查询某个标签的文章
+    static async  queryArticleByLabel(ctx) {
+        const article = ctx.query;
+        ctx.response.status = 200;
+        if (article.relationLabel) {
+            const articleList = await articleModel.queryArticleByLabel(article);
+            ctx.body = statusCode.SUCCESS_200('success', {
+                articleList: articleList
             });
         } else {
             ctx.body = statusCode.ERROR_1004();

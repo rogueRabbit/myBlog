@@ -82,7 +82,7 @@ const statusCode = {
     ERROR_1011: () => {
         return {
             return_code: -1011,
-            return_message: '修改文章失败，未找到要删除的文章！',
+            return_message: '修改文章失败，未找到要修改的文章！',
             data: {}
         }
     },
@@ -91,6 +91,14 @@ const statusCode = {
         return {
             return_code: -1012,
             return_message: '下架文章失败！',
+            data: {}
+        }
+    },
+
+    ERROR_1013: () => {
+        return {
+            return_code: -1011,
+            return_message: '修改笔记失败，未找到要修改的笔记！',
             data: {}
         }
     },

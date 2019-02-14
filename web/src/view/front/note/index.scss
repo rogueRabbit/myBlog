@@ -1,0 +1,19 @@
+.noteWrap {
+    background-color: #ffffff;
+    padding: 20px;
+    margin-bottom: 31px;
+    .archivesItem {
+        h2 {
+            padding-bottom: 20px;
+            font-size: 1.5em;
+            border-bottom: 1px solid #eee;
+            margin-bottom: 20px;
+        }
+        .date {
+            padding-right: 5px;
+        }
+        .articleTitle {
+            color: #2eabfd;
+        }
+    }
+}

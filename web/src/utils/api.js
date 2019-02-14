@@ -11,6 +11,11 @@ const API = {
     shelfArticle: '/api/article/shelfArticle',
     userLouout: '/api/user/userLouout',
     queryArticleById: '/api/article/queryArticleById',
+    queryArticleByLabel: '/api/article/queryArticleByLabel',
+    addOrModifyNote: '/api/note/addOrModifyNote',
+    queryAllNote: '/api/note/queryAllNote',
+    shelfNote: '/api/note/shelfNote',
+    queryNoteById: '/api/note/queryNoteById',
 
 }
 

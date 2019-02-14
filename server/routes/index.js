@@ -2,6 +2,7 @@ const Router = require('koa-router')
 const UserController = require('../controllers/user')
 const LabelController = require('../controllers/label')
 const ArticleController = require('../controllers/article')
+const NoteController = require('../controllers/note')
 
 const router = new Router({
     prefix: '/api'
@@ -56,6 +57,27 @@ router.get('/article/shelfArticle', ArticleController.shelfArticle);
 
 // 查询文章详情
 router.get('/article/queryArticleById', ArticleController.queryArticleById);
+
+// 查询某个标签的文章
+router.get('/article/queryArticleByLabel', ArticleController.queryArticleByLabel);
+
+
+/**
+  * 笔记接口
+  */
+
+// 创建笔记
+router.post('/note/addOrModifyNote', NoteController.addOrModifyNote);
+
+// 查询笔记
+router.get('/note/queryAllNote', NoteController.queryAllNote);
+
+// 下架笔记
+router.get('/note/shelfNote', NoteController.shelfNote);
+
+// 查询笔记详情
+router.get('/note/queryNoteById', NoteController.queryNoteById);
+
 
 
 

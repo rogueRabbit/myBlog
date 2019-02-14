@@ -7,7 +7,7 @@ class Ueditor extends Component {
         config: {
             autoHeightEnabled: true,
             autoFloatEnabled: true,
-            initialFrameHeight: 300,
+            initialFrameHeight: 200,
             editorContent: ''
         }
       }

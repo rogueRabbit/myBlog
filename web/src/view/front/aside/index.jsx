@@ -1,4 +1,5 @@
 import React, { PureComponent } from 'react';
+import { Link } from 'react-router';
 import Util from 'utils';
 import API from 'utils/api';
 import './index.scss';
@@ -42,12 +43,12 @@ class Aside extends PureComponent {
                     </div>
                 </div>
                 <div className="widget">
-                    <h4 className="title">标签云</h4>
+                    <h4 className="title">标签</h4>
                     <div className="content tag-cloud">
                         {
                             labelList.map((item, index) => {
                                 return (
-                                    <a href="/tag/ke-hu-duan/" key={index}>{item.labelName}</a>
+                                    <Link to={ '/subject?labelId=' + item.id + '&labelName=' + item.labelName } key={index}>{item.labelName}</Link>
                                 )
                             })
                         }

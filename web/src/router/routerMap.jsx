@@ -10,8 +10,10 @@ import HomeLayout from 'view/admin/layout/index';
 import UserManager from 'view/admin/user/index';
 import LabelManager from 'view/admin/label/index';
 import ArticleManager from 'view/admin/article/index';
+import NoteManager from 'view/admin/note/index';
 import AboutUs from 'view/front/aboutUs/index';
 import Note from 'view/front/note/index';
+import Subject from 'view/front/subject/index';
 
 
 class RouterMap extends Component {
@@ -37,11 +39,13 @@ class RouterMap extends Component {
                     <Route path="/article" component={Article}/>
                     <Route path="/aboutUs" component={AboutUs}/>
                     <Route path="/note" component={Note}/>
+                    <Route path="/subject" component={Subject}/>
                 </Route>
                 <Route component={HomeLayout}>
                     <Route path="/userManager" component={UserManager} onEnter={authRequired}></Route>
                     <Route path="/labelManager" component={LabelManager} onEnter={authRequired}></Route>
                     <Route path="/articleManager" component={ArticleManager} onEnter={authRequired}></Route>
+                    <Route path="/noteManager" component={NoteManager} onEnter={authRequired}></Route>
                 </Route>
             </Router>
         )

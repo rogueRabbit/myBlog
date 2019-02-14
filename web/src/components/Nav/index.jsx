@@ -9,9 +9,8 @@ class Nav extends PureComponent {
         this.state = {
             navList: [
                 { title: '首页', link: '/', isSelect: true },
-                { title: '文章', link: '/article', isSelect: false },
-                { title: '笔记', link: '/note', isSelect: false },
-                { title: '关于', link: '/aboutUs', isSelect: false },
+                { title: '文章归档', link: '/note', isSelect: false },
+                { title: '关于我', link: '/aboutUs', isSelect: false },
             ]
         }
     }

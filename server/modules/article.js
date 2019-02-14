@@ -12,7 +12,7 @@ class ArticleModel {
 
     // 添加文章
     static async createArticle(article) {
-        let { title, content, relationLabel, sort, publishMan, status } = article;
+        let { title, content, relationLabel, sort, publishMan, status, remark } = article;
         let publishTime = moment().format('YYYY-MM-DD HH:MM:SS');
         await Article.create({
             title, 
@@ -21,14 +21,15 @@ class ArticleModel {
             sort, 
             publishMan,
             publishTime, 
-            status
+            status,
+            remark
         })
         return true;
     }
 
     // 修改文章
     static async updateArticle(article) {
-        let { id, title, content, relationLabel, sort, publishMan, status } = article;
+        let { id, title, content, relationLabel, sort, publishMan, status, remark } = article;
         await Article.update({
             title: title,
             content: content,
@@ -36,11 +37,12 @@ class ArticleModel {
             sort: sort,
             publishMan: publishMan,
             status: status,
+            remark: remark,
         }, {
             where: {
                 id
             },
-            fields: ['title', 'content', 'relationLabel', 'sort', 'publishMan', 'status']
+            fields: ['title', 'content', 'relationLabel', 'sort', 'publishMan', 'status', 'remark']
         });
         return true
     }
@@ -53,11 +55,17 @@ class ArticleModel {
                 where: {
                   status: status
                 },
+                order: [
+                    ['publishTime', 'DESC'],
+                ]
               });
         } else {
             return await Article.findAll({
-                attributes: ['id', 'title', 'relationLabel', 'sort', 'publishMan', 'publishTime', 'status', 'content'],
-                include: [labelNameNew]
+                attributes: ['id', 'title', 'relationLabel', 'sort', 'publishMan', 'publishTime', 'status', 'content', 'remark'],
+                include: [labelNameNew],
+                order: [
+                    ['sort', 'ASC'],
+                ]
             })
         }
     }
@@ -89,6 +97,17 @@ class ArticleModel {
         });
         return true
     }
+
+    // 查询某个标签的文章
+    static async queryArticleByLabel(article) {
+        let { relationLabel } = article;
+        return await Article.findAll({
+            where: {
+                relationLabel: relationLabel
+            }
+        });
+    }
+
 }
 
 module.exports = ArticleModel;

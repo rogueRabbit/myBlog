@@ -74,6 +74,11 @@ class LabelController {
             ctx.body = statusCode.ERROR_1004();
         }
     }
+
+    // 统计每个标签的数目
+    static async queryLabelCount(ctx) {
+
+    }
 }
 
 module.exports = LabelController;

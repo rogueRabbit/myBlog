@@ -39,7 +39,10 @@ class LabelModel {
     // 查询所有的标签
     static async queryAllLabel(){
         return await Label.findAll({
-            attributes: ['id', 'labelName', 'sort', 'createTime', 'createMan']
+            attributes: ['id', 'labelName', 'sort', 'createTime', 'createMan'],
+            order: [
+                ['sort', 'ASC'],
+            ]
         })
     }
 
@@ -64,6 +67,11 @@ class LabelModel {
                 labelName
             }
         })
+    }
+
+    // 统计每个标签的数目
+    static async queryLabelCount() {
+        // await Label.
     }
 }
 

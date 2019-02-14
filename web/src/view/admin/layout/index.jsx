@@ -59,11 +59,14 @@ class HomeLayout extends Component {
       case '/userManager':
         current = '1';
         break;
-       case '/labelManager':
+      case '/labelManager':
         current = '2';
         break;
       case '/articleManager':
         current = '3';
+        break;
+      case '/noteManager':
+        current = '4';
         break;
       default:
         current = '1';
@@ -115,6 +118,12 @@ class HomeLayout extends Component {
               <Link to="/articleManager" style={{color: '#fff'}}>
                 <Icon type="project" />
                 <span>文章管理</span>
+              </Link>
+            </Menu.Item>
+            <Menu.Item key="4">
+              <Link to="/noteManager" style={{color: '#fff'}}>
+                <Icon type="project" />
+                <span>笔记管理</span>
               </Link>
             </Menu.Item>
           </Menu>

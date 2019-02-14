@@ -47,46 +47,25 @@ const CollectionCreateForm = Form.create()(
             };
         }
 
-        componentDidMount() {
-            this.queryLabelList();
-        }
-
-        // 查询所有的标签
-        queryLabelList() {
-            Util.get(API.queryLabelList, {}).then(json => {
-                if (json.return_code === 0) {
-                    let list = json.data.list;
-                    this.setState({
-                        labelList: list,
-                    })
-                } else {
-                
-                }
-            });
-        }
-
         // 提交表单
         handleSubmit = (e) => {
             e.preventDefault();
             let content = this.refs.childEditor.getContent();
+            console.log(content);
             this.props.form.validateFields((err, values) => {
                 if (!err) {
                     let isEdit = this.props.isEdit;
                     const params = {
-                        title: values.title,
-                        relationLabel: values.relationLabel,
-                        remark: values.remark,
+                        noteTitle: values.title,
                         content: content,
-                        sort: values.sort,
                         status: 1,
-                        publishMan: 'pandeng'
                     };
 
                     if (isEdit) {
                         params['id'] = this.props.current.id;
                     }
                     
-                    Util.post(API.addOrModifyArticle, params).then(json => {
+                    Util.post(API.addOrModifyNote, params).then(json => {
                         if (json.return_code === 0) {
                             this.props.onCreate();
                         } else {
@@ -103,8 +82,6 @@ const CollectionCreateForm = Form.create()(
             const {
                 visible, onCancel, form, current, isEdit, onClose
             } = this.props;
-
-            let { labelList } = this.state;
 
             const { getFieldDecorator } = form;
             let isDisabled = false;
@@ -128,49 +105,16 @@ const CollectionCreateForm = Form.create()(
                     width='1000px'
                 >
                     <Form layout="vertical" onSubmit={this.handleSubmit}>
-                        <FormItem label="文章标题" labelCol={{ span: 2 }} wrapperCol={{ span: 22 }}>
+                        <FormItem label="标题" labelCol={{ span: 2 }} wrapperCol={{ span: 22 }}>
                             {getFieldDecorator('title',
                                 {
-                                    rules: [{ required: true, message: '请输入文章标题！' }],
-                                    initialValue: current.title,
+                                    rules: [{ required: true, message: '请输入标题！' }],
+                                    initialValue: current.noteTitle,
                                 })(
                                 <Input />,
                             )}
                         </FormItem>
-                        <FormItem label="所属标签" labelCol={{ span: 2 }} wrapperCol={{ span: 22 }}>
-                            {getFieldDecorator('relationLabel',
-                                {
-                                    rules: [{ required: true, message: '请选择所属标签！' }],
-                                    initialValue: current.relationLabel,
-                                })(
-                                <Select>
-                                    { labelList.length > 0 ? (
-                                        labelList.map((item, index) => {
-                                            return <option key={index} value={item.id}>{item.labelName}</option>
-                                        })
-                                    ) : null }
-                                </Select>,
-                            )}
-                        </FormItem>
-                        <FormItem label="排序" labelCol={{ span: 2 }} wrapperCol={{ span: 22 }}>
-                            {getFieldDecorator('sort',
-                                {
-                                    rules: [{ required: true, message: '请输入排序！' }],
-                                    initialValue: current.sort,
-                                })(
-                                <Input />,
-                            )}
-                        </FormItem>
-                        <FormItem label="摘要" labelCol={{ span: 2 }} wrapperCol={{ span: 22 }}>
-                            {getFieldDecorator('remark',
-                                {
-                                    rules: [{ required: true, message: '请输入摘要！' }],
-                                    initialValue: current.remark,
-                                })(
-                                <Input />,
-                            )}
-                        </FormItem>
-                        <FormItem label="文章内容" labelCol={{ span: 2 }} wrapperCol={{ span: 22 }}>
+                        <FormItem label="内容" labelCol={{ span: 2 }} wrapperCol={{ span: 22 }}>
                             <Ueditor ref="childEditor" id="content" editorContent={current.content} /> 
                         </FormItem>
                     </Form>
@@ -181,7 +125,7 @@ const CollectionCreateForm = Form.create()(
 );
   
 
-class ArticleManager extends Component {
+class NoteManager extends Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -192,12 +136,12 @@ class ArticleManager extends Component {
     }
 
     componentDidMount() {
-        this.queryArticleList();
+        this.queryNoteList();
     }
 
-    // 查询文章
-    queryArticleList() {
-        Util.get(API.queryArticleList, {}).then(json => {
+    // 查询笔记
+    queryNoteList() {
+        Util.get(API.queryAllNote, {}).then(json => {
             if (json.return_code === 0) {
                 let list = json.data.list;
                 let newList = list.map((item, index) => {
@@ -227,7 +171,7 @@ class ArticleManager extends Component {
         const form = this.formRef.props.form;
         form.resetFields();
         this.setState({ showAdd: false });
-        this.queryArticleList();
+        this.queryNoteList();
     }
 
     saveFormRef = (formRef) => {
@@ -252,26 +196,26 @@ class ArticleManager extends Component {
         else if (key === 'delete') {
             let title = currentItem.status === 1 ? '下架' : '上架';
             Modal.confirm({
-                title: title + '文章',
-                content: '是否确定' + title +'【' + currentItem.title + '】',
+                title: title + '笔记',
+                content: '是否确定' + title +'【' + currentItem.noteTitle + '】',
                 okText: '确认',
                 cancelText: '取消',
-                onOk: () => this.deleteItem(currentItem.id, currentItem.title, currentItem.status, title),
+                onOk: () => this.deleteItem(currentItem.id, currentItem.noteTitle, currentItem.status, title),
             });
         }
     };
 
-    // 删除标签
+    // 删除笔记
     deleteItem(id, title, status, handleTitle) {
         let lastStatus = status === 1 ? -1 : 1;
-        Util.get(API.shelfArticle, {
+        Util.get(API.shelfNote, {
             id: id,
             status: lastStatus,
         }).then(res => {
             if (res) {
                 if (res.return_code === 0) {
                     message.info(title + '已被' + handleTitle);
-                    this.queryArticleList();
+                    this.queryNoteList();
                 }
             }
         }, (error) => {
@@ -282,28 +226,13 @@ class ArticleManager extends Component {
     render() {
 
         const columns = [{
-            title: '文章标题',
-            dataIndex: 'title',
-            key: 'title',
-          }, {
-            title: '所属标签',
-            dataIndex: 'relationLabel',
-            key: 'relationLabel',
-            render: (text, record) => {
-                return record.labels.labelName;
-            }
-          }, {
-            title: '作者',
-            dataIndex: 'publishMan',
-            key: 'publishMan',
-          }, {
-            title: '排序',
-            dataIndex: 'sort',
-            key: 'sort',
+            title: '标题',
+            dataIndex: 'noteTitle',
+            key: 'noteTitle',
           }, {
             title: '创建时间',
-            dataIndex: 'publishTime',
-            key: 'publishTime',
+            dataIndex: 'createTime',
+            key: 'createTime',
           },{
             title: '状态',
             dataIndex: 'status',
@@ -327,7 +256,7 @@ class ArticleManager extends Component {
         let { data, showAdd, isEdit, current = {} } = this.state;
         return (
             <div>
-                <Nagination title={'文章管理'}/>
+                <Nagination title={'笔记管理'}/>
                 <Row>
                     <Col span={24} style={{padding: '10px', textAlign: 'right'}}>
                         <div >
@@ -358,4 +287,4 @@ class ArticleManager extends Component {
     }
 }
 
-export default ArticleManager;
+export default NoteManager;

@@ -12,7 +12,6 @@ class Article extends Component {
     }
 
     componentDidMount() {
-        console.log(this.props);
         let search = this.props.location.search;
         let id = Util.getUrlParam(search, 'id');
         this.queryArticleDetail(id);
@@ -37,7 +36,7 @@ class Article extends Component {
         return (
             <div className="row">
                 <main className="col-md-8 main-content">
-                    <article id="111" className="post">
+                    <article className="post">
                         <header className="post-head">
                             <h1 className="post-title">{articleDetail.title}</h1>
                             <section className="post-meta">

@@ -24,7 +24,8 @@ class ArticleItem extends PureComponent {
                             <time className="post-date" >{singleArticle.publishTime}</time>
                         </div>
                     </div>
-                    <div className="post-content" dangerouslySetInnerHTML={{ __html: singleArticle.content}} />
+                    {/* <div className="post-content" dangerouslySetInnerHTML={{ __html: singleArticle.content}} /> */}
+                    <div className="post-content">{singleArticle.remark}</div>
                     <div className="post-permalink">
                         <Link to={'/article?id='+singleArticle.id} className="btn btn-default">阅读全文</Link>
                     </div>
